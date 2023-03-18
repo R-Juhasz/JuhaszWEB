@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Juhasz.WEB</string>
+    <string name="todo">TODO</string>
+    <string name="search_or_type_url">Search or type URL</string>
+    <string name="todo1">TODO</string>
+    <string name="search_or_type_url1">Search or Type URL</string>
+</resources>
