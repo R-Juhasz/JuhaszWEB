@@ -1,39 +1,36 @@
 package com.example.juhaszweb;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class MainActivity extends AppCompatActivity {
 
+    // Declare UI elements
     EditText urlInput;
     ImageView clearUrl;
     WebView webView;
     ProgressBar progressBar;
-    ImageView webBack,webForward,webRefresh,webShare;
+    ImageView webBack, webForward, webRefresh, webShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Assign UI elements
         urlInput = findViewById(R.id.url_input);
         clearUrl = findViewById(R.id.clear_icon);
         progressBar = findViewById(R.id.progress_bar);
@@ -44,13 +41,15 @@ public class MainActivity extends AppCompatActivity {
         webRefresh = findViewById(R.id.web_refresh);
         webShare = findViewById(R.id.web_share);
 
+        // Set up web settings for the WebView
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
 
+        // Set up the WebView client to handle web page loading
         webView.setWebViewClient(new MyWebViewClient());
-        webView.setWebChromeClient(new WebChromeClient(){
+        webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
@@ -58,105 +57,74 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Load a default URL
         loadMyUrl("google.com");
 
+        // Set up the URL input field to handle user input
         urlInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(i == EditorInfo.IME_ACTION_GO || i == EditorInfo.IME_ACTION_DONE){
+                if (i == EditorInfo.IME_ACTION_GO || i == EditorInfo.IME_ACTION_DONE) {
+                    // Hide the soft keyboard
                     InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(urlInput.getWindowToken(),0);
+                    imm.hideSoftInputFromWindow(urlInput.getWindowToken(), 0);
+                    // Load the entered URL
                     loadMyUrl(urlInput.getText().toString());
                     return true;
                 }
                 return false;
             }
+
+            private void loadMyUrl(String toString) {
+                
+            }
         });
 
+        // Set up the clear URL button
         clearUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Clear the URL input field
                 urlInput.setText("");
             }
         });
 
+        // Set up the back button
         webBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(webView.canGoBack()){
+                // Go back in the WebView history
+                if (webView.canGoBack()) {
                     webView.goBack();
                 }
             }
         });
 
+        // Set up the forward button
         webForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(webView.canGoForward()){
+                // Go forward in the WebView history
+                if (webView.canGoForward()) {
                     webView.goForward();
                 }
             }
         });
 
+        // Set up the refresh button
         webRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Reload the current web page
                 webView.reload();
             }
         });
-
-        webShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
-                intent.setType("text/plain");
-                startActivity(intent);
-            }
-        });
-
-
-
     }
 
-    void loadMyUrl(String url){
-        boolean matchUrl = Patterns.WEB_URL.matcher(url).matches();
-        if(matchUrl){
-            webView.loadUrl(url);
-        }else{
-            webView.loadUrl("google.com/search?q="+url);
-        }
+    private void loadMyUrl(String s) {
     }
+}
 
-    @Override
-    public void onBackPressed() {
+        // Set up the share button
 
-        if(webView.canGoBack()){
-            webView.goBack();
-        }else{
-            super.onBackPressed();
-        }
-
-    }
-
-    class MyWebViewClient extends WebViewClient{
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return false;
-        }
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-            urlInput.setText(webView.getUrl());
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, url);
-            progressBar.setVisibility(View.INVISIBLE);
-        }
-    }}
 
